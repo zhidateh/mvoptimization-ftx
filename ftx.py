@@ -6,6 +6,7 @@ from requests import Request, Session, Response
 import hmac
 from ciso8601 import parse_datetime
 
+from datetime import datetime
 
 
 class FtxClient:
@@ -179,3 +180,15 @@ class FtxClient:
             if len(response) < limit:
                 break
         return results
+
+
+
+    def get_candle(self, market:str, resolution:int, start_time: str=None, end_time:str=None) -> List:
+
+        start_time = datetime.strptime(start_time,"%Y-%m-%dT%H:%M:%S%z").timestamp()
+        end_time   = datetime.strptime(end_time,"%Y-%m-%dT%H:%M:%S%z").timestamp()
+
+        return self._get(f'markets/{market}/candles',
+                        {'resolution': resolution,
+                        'start_time':start_time,
+                        'end_time':end_time})
